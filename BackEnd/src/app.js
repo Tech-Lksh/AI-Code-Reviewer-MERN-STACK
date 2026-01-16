@@ -1,18 +1,25 @@
 const express = require('express');
-const aiRoutes = require('./routes/ai.routes')
-const cors = require('cors')
+const cors = require('cors');
+const aiRoutes = require('./routes/ai.routes');
 
-const app = express()
+const app = express();
 
-app.use(cors())
+// ✅ CORS CONFIG (Vercel → Render)
+app.use(cors({
+  origin: "https://ai-code-reviewer-mern-stack.vercel.app",
+  methods: ["GET", "POST"],
+  credentials: true
+}));
 
+// ✅ Increase payload limit (important for AI requests)
+app.use(express.json({ limit: "10mb" }));
 
-app.use(express.json())
-
+// ✅ Health check route (prevents Render sleep issue)
 app.get('/', (req, res) => {
-    res.send('Hello World')
-})
+  res.send('Backend is running');
+});
 
-app.use('/ai', aiRoutes)
+// ✅ Routes
+app.use('/ai', aiRoutes);
 
-module.exports = app
+module.exports = app;
